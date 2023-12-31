@@ -1,0 +1,17 @@
+#!/bin/sh
+exec 2>&1
+
+die() { # {{{
+    code=$1
+    shift
+    printf "Error! => %s\n\n" "$*" >&2
+    printf "Sleeping for a while so we don't respawn too fast" >&2
+    sleep 5
+    # shellcheck disable=SC2086
+    exit $code
+} # }}}
+
+cd /opt/timpi || die 1 "Directory /opt/timpi does not exist"
+[ -f ./TimpiCollector ] || die 2 "No TimpiCollector binary exists"
+[ -x ./TimpiCollector ] || chmod 755 ./TimpiCollector
+exec ./TimpiCollector
