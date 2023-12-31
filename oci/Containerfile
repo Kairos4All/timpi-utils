@@ -2,7 +2,7 @@ FROM ubuntu:jammy as builder
 LABEL maintainer="Crypto Kairos <code@kairos.expert>"
 ENV BINDIR=/usr/local/bin
 RUN apt-get update && \
-    apt-get install -y curl git unzip make && \
+    apt-get install -y curl git unzip && \
     mkdir -p /opt/timpi && \
     curl -sL "https://cdn.discordapp.com/attachments/1179427403962007643/1181673826975752303/TimpiCollector-0-9-0-LINUX.zip?ex=659d9a02&is=658b2502&hm=54757710c35bbff98089f4a39c31a2be7ba12d755bd0d86361f41be892def312&" > /opt/timpi/main.zip && \
     unzip -d /opt/timpi /opt/timpi/main.zip && \
@@ -11,21 +11,17 @@ RUN apt-get update && \
     rm /opt/timpi/*.zip && \
     curl -sL "https://cdn.discordapp.com/attachments/1179427403962007643/1181674141691154452/Collector-0-9-1.zip?ex=659d9a4d&is=658b254d&hm=172fcd06faf94016448baff594a8324d15040a068a616223a458dc6f59f36f0b&" > /opt/timpi/main.zip && \
     unzip -o -d /opt/timpi /opt/timpi/main.zip && \
-    rm /opt/timpi/main.zip && \
-    cd /tmp/ && git clone https://github.com/rubyists/sv-helper && \
-    cd /tmp/sv-helper && \
-    make install BINDIR=$BINDIR
+    rm /opt/timpi/main.zip
 
 FROM ubuntu:jammy
 ARG UNAME=timpi
 ARG UID=1000
 ARG GID=1000
 COPY --from=builder /opt/timpi /opt/timpi
-COPY --from=builder /usr/local/bin /usr/local/bin
 RUN groupadd -g $GID -o $UNAME && \
     useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME && \
     apt-get update && \
-    apt-get install -y runit libicu-dev && \
+    apt-get install -y runit libicu70 && \
     rm -rf /var/lib/apt/lists/*
 COPY oci/runit-init.sh /runit-init.sh
 COPY oci/sv /etc/sv
