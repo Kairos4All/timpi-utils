@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build container image
-        run: buildah bud --layers --format docker -t timpi-collector -f oci/Containerfile .
+        run: buildah bud --squash --format docker -t timpi-collector -f oci/Containerfile .
 
       - name: Set container version
         run: |
