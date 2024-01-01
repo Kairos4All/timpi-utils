@@ -15,9 +15,9 @@ jobs:
 
       - name: Set container version
         run: |
-          if [ -f "update_version.txt" ]; then
+          [[ -f "update_version.txt" ]]; then
             echo "IMAGE_TAG=$(awk -F ':' '{ print $1 }' < update_version.txt)" >> $GITHUB_ENV
-          elsif [ -f "major_version.txt" ]; then
+          else
             echo "IMAGE_TAG=$(awk -F ':' '{ print $1 }' < major_version.txt)" >> $GITHUB_ENV
           fi
 
